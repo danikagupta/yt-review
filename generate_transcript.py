@@ -50,6 +50,11 @@ def get_ydl_opts(external_logger=lambda x: None):
     "progress_hooks": [my_hook],
 }
 
+def extract_video_id(url):
+    pattern = r'(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})'
+    match = re.search(pattern, url)
+    return match.group(1) if match else None
+
 def download_video_audio(url, external_logger=lambda x: None):
     retries = 0
     while retries < max_retries:
@@ -65,7 +70,13 @@ def download_video_audio(url, external_logger=lambda x: None):
                 print("youtube-dl result :", res)
                 mp3_filename = os.path.splitext(filename)[0] + '.mp3'
                 print('mp3 file name - ', mp3_filename)
-                return mp3_filename
+                return {
+                    'filename': mp3_filename,
+                    'title': info['title'],
+                    'duration': info['duration'],
+                    'filesize': filesize,
+                    'id': extract_video_id(url),
+                }
         except Exception as e:
             retries += 1
             print(

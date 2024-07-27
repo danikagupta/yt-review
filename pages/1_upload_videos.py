@@ -5,15 +5,16 @@ show_navigation()
 
 
 from generate_transcript import transcribe_session
+from session_info import get_session_information
 
 def upload_one_video():
     st.write("Upload Video URL (e.g. https://youtu.be/vgYi3Wr7v_g)")
     #yt_url = st.text_input("Youtube Video URL")
     #if yt_url is not None:
     if yt_url := st.text_input("Youtube Video URL"):
-        st.write("Video uploaded successfully")
-        transcript=transcribe_session(yt_url,st.secrets['ASSEMBLYAI_API_KEY'])
-        st.write(transcript)
+        st.write("Video upload start")
+        info=get_session_information(yt_url)
+        st.table(info)
     else:
         st.write("Upload a video file")
 
