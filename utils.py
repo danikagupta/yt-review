@@ -1,4 +1,22 @@
 import streamlit as st
+from datetime import datetime
+
+from google.oauth2 import service_account
+import json
+
+
+def current_time():
+    return datetime.now().strftime("%H:%M:%S")
+
+def get_google_cloud_credentials():
+    # Get Google Cloud credentials from JSON file
+    js1 = st.secrets["GOOGLE_KEY"]
+    #print(" A-plus Google credentials JS: ", js1)
+    credentials_dict=json.loads(js1)
+    credentials = service_account.Credentials.from_service_account_info(credentials_dict)   
+    st.session_state.credentials = credentials
+    return credentials
+    
 
 def show_navigation():
     with st.container(border=True):

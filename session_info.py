@@ -1,4 +1,4 @@
-from datetime import datetime
+
 import pandas as pd
 import yt_dlp as youtube_dl
 import time
@@ -6,33 +6,12 @@ import time
 import os
 import re
 
+from google_firestore import find_ytvideo_by_url
+from google_firestore import add_video_to_firestore
+
 max_retries = 3
 delay = 2
 
-class MyLogger(object):
-    def __init__(self, external_logger=lambda x: None):
-        self.external_logger = external_logger
-
-    def debug(self, msg):
-        print("[debug]: ", msg)
-        self.external_logger(msg)
-
-    def warning(self, msg):
-        print("[warning]: ", msg)
-
-    def error(self, msg):
-        print("[error]: ", msg)
-
-
-def my_hook(d):
-    print("hook", d["status"])
-    if d["status"] == "finished":
-        print("Done downloading, now converting ...")
-
-
-
-def current_time():
-    return datetime.now().strftime("%H:%M:%S")
 
 def get_ydl_opts_session():
     return {
@@ -54,9 +33,9 @@ def get_session_information(url):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 print("Getting session information ", url)
                 info = ydl.extract_info(url, download=False)
-                print(f"Download YouTube Filesize: {filesize}")
                 filename = ydl.prepare_filename(info)
                 return {
+                    'url': url,
                     'filename': filename,
                     'title': info['title'],
                     'duration': info['duration'],
@@ -71,3 +50,18 @@ def get_session_information(url):
             if retries >= max_retries:
                 raise e
             time.sleep(delay)
+
+def get_update_session_info(url):
+    info=get_session_information(url)
+    print(f"GET-UPDATE-SESSION-INFO: Info: {info}")
+    new_url=info.get('url')
+    print(f"New URL: {new_url}")
+    videos=find_ytvideo_by_url(new_url)
+    print(f"Videos are: {videos}")
+    if videos:
+        print(f"Video found in Firestore {videos}")
+    else:
+        print("New video")
+        add_video_to_firestore(info)
+        
+    return videos

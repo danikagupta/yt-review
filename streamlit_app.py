@@ -3,11 +3,13 @@ import streamlit as st
 from utils import show_navigation
 show_navigation()
 
-from generate_transcript import transcribe_session
-
-
 
 st.title("🎈 Youtube Review")
+
+
+
+
+
 aaa="""
 tab1,tab2,tab3=st.tabs(["Upload Video","Review Video","See Analysis"])
 
