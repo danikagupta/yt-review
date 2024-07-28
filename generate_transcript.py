@@ -115,7 +115,16 @@ def transcribe_session_core(youtube_link,assembly_api_key):
         return f"Error transcribing audio: {transcript.error}"
     
     msg=""
-    for utterance in transcript.utterances:
-        duration=(utterance.end-utterance.start)/1000
-        msg=msg+f"{utterance.start//1000} - {duration} : Speaker {utterance.speaker}: {utterance.text}\n"
+    try:
+        for utterance in transcript.utterances:
+            try:
+                duration=(utterance.end-utterance.start)/1000
+                msg=msg+f"{utterance.start//1000} - {duration} : Speaker {utterance.speaker}: {utterance.text}\n"
+            except Exception as e:
+                print(f"Error processing utterance: {e}")
+                msg=msg+f"Error processing utterance: {e}\n"
+    except Exception as e:
+        print(f"Error processing transcript: {e}")
+        msg=msg+f"Error processing transcript: {e}"
+
     return msg

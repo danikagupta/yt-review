@@ -60,8 +60,10 @@ def transcribe_video_from_db():
         videos=get_new_videos(videoCount)
         for video in videos:
             id=video['id']
+            title=video['title']
             url=video['youtube_url']
-            st.markdown(f"Transcribing video {id} at {url}")
+            duration=video['duration']
+            st.markdown(f"Transcribing video {title} at {url} with duration {duration}. Id={id}")
             transcribe_one_video_with_firestore(url)
         st.markdown("Transcription complete for {videoCount} videos")
 
