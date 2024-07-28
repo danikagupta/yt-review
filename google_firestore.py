@@ -44,7 +44,9 @@ def add_video_to_firestore(info):
             u'duration': duration,
             u'youtube_url': youtube_url,
             u'status' : 'new',
-            u'timestamp': timestamp
+            u'timestamp': timestamp,
+            u'dateAdded' : firestore.SERVER_TIMESTAMP,
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP
         })
         print(f"Session {hash_id} added")
         return
@@ -95,7 +97,9 @@ def check_and_add_zoom_session(credentials,hash_id,title,timestamp,youtube_url):
             u'title': title,
             u'timestamp': timestamp,
             u'youtube_url': youtube_url,
-            u'status' : 'new'
+            u'status' : 'new',
+            u'dateAdded' : firestore.SERVER_TIMESTAMP,
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP
         })
         #print(f"Session {hash_id} added")
         return

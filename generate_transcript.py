@@ -89,35 +89,19 @@ def download_video_audio(url, external_logger=lambda x: None):
 
 def transcribe_yt_assembly2(url,assembly_api_key):
     aai.settings.api_key = assembly_api_key
-    
-    config = aai.TranscriptionConfig(
-     speaker_labels=True,
-    )
+    config = aai.TranscriptionConfig(speaker_labels=True)
     transcript = aai.Transcriber().transcribe(url, config)
     return transcript
 
-def save_transcript(ts):
-    df=pd.DataFrame(columns=["start","duration","speaker","text"])
-    for t in ts:
-        duration=(t.end-t.start)/1000
-        df.loc[len(df)]=[t.start//1000,duration,t.speaker,t.text]
-    #df.to_csv(file_path,index=False)
-    #
-    # We still need code here to save the transcript back to Google Firestore.
-    #
 
-def transcribe_session(youtube_link,assembly_api_key):
-    #st.write(f"{current_time()} About to fetch audio from URL {youtube_link}")
+def transcribe_session_core(youtube_link,assembly_api_key):
     audio_file = download_video_audio(youtube_link)
-    #st.write(f"{current_time()} Transcribing audio from URL {youtube_link} file: {audio_file}")
     transcript = transcribe_yt_assembly2(audio_file,assembly_api_key)
-    #st.write(f"{current_time()} Completed transcribing {youtube_link}")
     if transcript.status == aai.TranscriptStatus.error:
         return f"Error transcribing audio: {transcript.error}"
-    else:
-        save_transcript(transcript.utterances)
-        msg=""
-        for utterance in transcript.utterances:
-            duration=(utterance.end-utterance.start)/1000
-            msg=msg+f"{utterance.start//1000} - {duration} : Speaker {utterance.speaker}: {utterance.text}\n"
-        return msg
+    
+    msg=""
+    for utterance in transcript.utterances:
+        duration=(utterance.end-utterance.start)/1000
+        msg=msg+f"{utterance.start//1000} - {duration} : Speaker {utterance.speaker}: {utterance.text}\n"
+    return msg
