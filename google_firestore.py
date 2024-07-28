@@ -15,6 +15,32 @@ def find_zoom_session(session_id):
     else:
         return None
     
+def update_video_status_transcribing(id):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    doc_ref = db.collection(u'videos').document(id)
+    doc_ref.set({
+            u'status' : 'transcribing',
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+            merge=True)
+
+def update_video_status_transcribe_error(id):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    doc_ref = db.collection(u'videos').document(id)
+    doc_ref.set({
+            u'status' : 'transcribe_error',
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+            merge=True)
+    
+def update_video_status_transcribed(id):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    doc_ref = db.collection(u'videos').document(id)
+    doc_ref.set({
+            u'status' : 'transcribed',
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+            merge=True)
+
+# update_video_status_transcribing, add_transcript, update_video_status_transcribe_error, update_video_status_transcribed
+   
 def find_ytvideo_by_url(yt_url):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     collection_ref = db.collection(u'videos')
@@ -50,6 +76,39 @@ def add_video_to_firestore(info):
         })
         print(f"Session {hash_id} added")
         return
+
+def add_transcript(transcript,video_id,url,title, duration):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    doc_ref = db.collection(u'transcripts').document(video_id)
+    doc = doc_ref.get()
+    if doc.exists:
+        print(f"Transcript for video {video_id} already exists")
+        return False
+    else:
+        print(f"Adding transcript for video: {video_id}")
+        doc_ref.set({
+            u'transcript': transcript,
+            u'video_id': video_id,
+            u'youtube_url': url,
+            u'title': title,
+            u'duration': duration,
+            u'dateAdded' : firestore.SERVER_TIMESTAMP,
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP
+        })
+        print(f"Transcript for video {video_id} added")
+        return True
+
+def get_new_videos(count=5):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    collection_ref = db.collection(u'videos')
+    query = collection_ref.where('status', '==', 'new').limit(count)
+    docs = query.stream()
+    
+    # Collect document IDs that match the query
+    results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
+    return results   
+
+
 
 xxxxxx="""
 def fetch_sessions_with_transcripts(credentials):

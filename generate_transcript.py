@@ -5,6 +5,7 @@ import yt_dlp as youtube_dl
 import time
 
 import os
+import re
 
 max_retries = 3
 delay = 2
@@ -93,10 +94,23 @@ def transcribe_yt_assembly2(url,assembly_api_key):
     transcript = aai.Transcriber().transcribe(url, config)
     return transcript
 
+def transcribe_yt_assembly3(url,assembly_api_key):
+    print(f"TRANSCRIBE-YT-ASSEMBLY3: Downloading audio from {url} with key {assembly_api_key}")
+    aai.settings.api_key = assembly_api_key
+    config = aai.TranscriptionConfig(speaker_labels=True)
+    with youtube_dl.YoutubeDL() as ydl:
+        info = ydl.extract_info(url, download=False)
+        for format in info["formats"][::-1]:
+            if format["resolution"] == "audio only" and format["ext"] == "m4a":
+                url = format["url"]
+                break
+        print(f"TRANSCRIBE-YT-ASSEMBLY3: Downloading audio from {url}")
+        transcript = aai.Transcriber().transcribe(url, config)
+        return transcript
+
 
 def transcribe_session_core(youtube_link,assembly_api_key):
-    audio_file = download_video_audio(youtube_link)
-    transcript = transcribe_yt_assembly2(audio_file,assembly_api_key)
+    transcript = transcribe_yt_assembly3(youtube_link,assembly_api_key)
     if transcript.status == aai.TranscriptStatus.error:
         return f"Error transcribing audio: {transcript.error}"
     
