@@ -8,7 +8,7 @@ from utils import get_google_cloud_credentials
 
 def find_zoom_session(session_id):
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    doc_ref = db.collection(u'sessions').document(session_id)
+    doc_ref = db.collection(u'videos').document(session_id)
     doc = doc_ref.get()
     if doc.exists:
         return doc.to_dict()
@@ -17,7 +17,7 @@ def find_zoom_session(session_id):
     
 def find_ytvideo_by_url(yt_url):
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    collection_ref = db.collection(u'sessions')
+    collection_ref = db.collection(u'videos')
     query=collection_ref.where('youtube_url', '==', yt_url)
     docs=query.stream()
 
@@ -30,8 +30,9 @@ def add_video_to_firestore(info):
     title=info.get('title')
     duration=info.get('duration')
     youtube_url=info.get('url')
+    timestamp=info.get('timestamp')
     hash_id = hashlib.md5(f"{title}-{duration}-{youtube_url}".encode()).hexdigest()
-    doc_ref = db.collection(u'sessions').document(hash_id)
+    doc_ref = db.collection(u'videos').document(hash_id)
     doc = doc_ref.get()
     if doc.exists:
         print(f"Session {hash_id} already exists")
@@ -43,12 +44,12 @@ def add_video_to_firestore(info):
             u'duration': duration,
             u'youtube_url': youtube_url,
             u'status' : 'new',
-            u'timestamp': firestore.SERVER_TIMESTAMP
+            u'timestamp': timestamp
         })
         print(f"Session {hash_id} added")
         return
 
-
+xxxxxx="""
 def fetch_sessions_with_transcripts(credentials):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     collection_ref = db.collection(u'sessions')
@@ -98,3 +99,6 @@ def check_and_add_zoom_session(credentials,hash_id,title,timestamp,youtube_url):
         })
         #print(f"Session {hash_id} added")
         return
+
+
+"""
