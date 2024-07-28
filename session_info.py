@@ -2,6 +2,7 @@
 import pandas as pd
 import yt_dlp as youtube_dl
 import time
+from datetime import datetime, timezone
 
 import os
 import re
@@ -30,15 +31,18 @@ def get_session_information(url):
     while retries < max_retries:
         try:
             ydl_opts = get_ydl_opts_session()
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                print("Getting session information ", url)
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:  
                 info = ydl.extract_info(url, download=False)
+                #print(f"Getting session information {url} returns {info} ")
                 filename = ydl.prepare_filename(info)
+                
                 return {
                     'url': url,
                     'filename': filename,
                     'title': info['title'],
                     'duration': info['duration'],
+                    'upload_date': info.get('upload_date'),
+                    'timestamp': datetime.fromtimestamp(info.get('timestamp')),
                     'id': extract_video_id(url),
                 }
         except Exception as e:
@@ -52,16 +56,20 @@ def get_session_information(url):
             time.sleep(delay)
 
 def get_update_session_info(url):
-    info=get_session_information(url)
-    print(f"GET-UPDATE-SESSION-INFO: Info: {info}")
-    new_url=info.get('url')
-    print(f"New URL: {new_url}")
-    videos=find_ytvideo_by_url(new_url)
-    print(f"Videos are: {videos}")
-    if videos:
-        print(f"Video found in Firestore {videos}")
-    else:
-        print("New video")
-        add_video_to_firestore(info)
-        
-    return videos
+    try:
+        info=get_session_information(url)
+        print(f"GET-UPDATE-SESSION-INFO: Info: {info}")
+        new_url=info.get('url')
+        print(f"New URL: {new_url}")
+        videos=find_ytvideo_by_url(new_url)
+        print(f"Videos are: {videos}")
+        if videos:
+            print(f"Video found in Firestore {videos}")
+        else:
+            print("New video")
+            add_video_to_firestore(info)
+            
+        return videos
+    except Exception as e:
+        print(f"Error in get_update_session_info: {e}")
+        return None
