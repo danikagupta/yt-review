@@ -57,14 +57,15 @@ def transcribe_video_from_db():
     videoCount = st.slider("Select number of videos", 1, 1000, value=5)
     if st.button("Transcribe from DB"):
         videos=get_new_videos(videoCount)
-        for video in videos:
+        for iteration_id,video in enumerate(videos,start=1):
             id=video['id']
             title=video['title']
             url=video['youtube_url']
             duration=video['duration']
-            st.markdown(f"Transcribing video {title} at {url} with duration {duration}. Id={id}")
+            st.markdown(f"Iteration {iteration_id}: Transcribing video {title} at {url} with duration {duration}. Id={id}")
             transcribe_one_video_with_firestore(url)
-        st.markdown("Transcription complete for {videoCount} videos")
+        st.markdown(f"Transcription complete for {videoCount} videos")
+
 
 st.divider()
 transcribe_one_video()
