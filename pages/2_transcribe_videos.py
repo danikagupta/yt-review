@@ -35,7 +35,6 @@ def transcribe_one_video_with_firestore(url):
         st.markdown("Error adding transcription to Firestore")
         update_video_status_transcribe_error(vid['id'])
 
-
 def transcribe_one_video():
     st.markdown("# Transcribe One Video URL\n Example: https://youtu.be/vgYi3Wr7v_g)")
     yt_url = st.text_input(" ")

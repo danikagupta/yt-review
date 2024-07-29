@@ -8,6 +8,10 @@ from google.oauth2 import service_account
 import hashlib
 
 
+from utils import show_navigation
+show_navigation()
+
+
 # Initialize Slack client with your bot token
 slack_token = st.secrets['SLACK_BOT_TOKEN']
 client = WebClient(token=slack_token)
@@ -183,3 +187,12 @@ def test_youtube_download():
 #
 if st.button("Run Youtube download"):
     test_youtube_download()
+
+import assemblyai as aai
+
+if st.button("Generate transcript"):
+    filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
+    aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
+    config = aai.TranscriptionConfig(speaker_labels=True)
+    transcript = aai.Transcriber().transcribe(filename, config)
+    st.markdown(transcript)

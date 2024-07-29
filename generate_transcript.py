@@ -7,6 +7,8 @@ import time
 import os
 import re
 
+import urllib.parse
+
 max_retries = 3
 delay = 2
 
@@ -88,12 +90,12 @@ def download_video_audio(url, external_logger=lambda x: None):
                 raise e
             time.sleep(delay)
 
-def transcribe_yt_assembly2(url,assembly_api_key):
-    aai.settings.api_key = assembly_api_key
-    #config = aai.TranscriptionConfig(speaker_labels=True)
-    config = aai.TranscriptionConfig()
-    transcript = aai.Transcriber().transcribe(url, config)
-    return transcript
+#def transcribe_yt_assembly2(url,assembly_api_key):
+#    aai.settings.api_key = assembly_api_key
+#    #config = aai.TranscriptionConfig(speaker_labels=True)
+#    config = aai.TranscriptionConfig()
+#    transcript = aai.Transcriber().transcribe(url, config)
+#    return transcript
 
 def transcribe_yt_assembly3(url,assembly_api_key):
     print(f"TRANSCRIBE-YT-ASSEMBLY3: Downloading audio from {url} with key {assembly_api_key}")
@@ -108,10 +110,48 @@ def transcribe_yt_assembly3(url,assembly_api_key):
         print(f"TRANSCRIBE-YT-ASSEMBLY3: Downloading audio from {url}")
         transcript = aai.Transcriber().transcribe(url, config)
         return transcript
+    
+def get_video_id(url):
+    # Parse the URL to get the query parameters
+    parsed_url = urllib.parse.urlparse(url)
+    query_params = urllib.parse.parse_qs(parsed_url.query)
+    
+    # Extract the 'id' parameter
+    video_id = query_params.get('id', [None])[0]
+    if video_id:
+        return video_id
+    video_id = query_params.get('v', [None])[0]
+    return video_id
+    
+def transcribe_yt_assembly_local(url,assembly_api_key):
+    print(f"TRANSCRIBE-YT-ASSEMBLY-LOCAL: Downloading audio from {url} with key {assembly_api_key}")
+
+    ydl_opts = {
+        'format': 'm4a/bestaudio/best',  # The best audio version in m4a format
+        'outtmpl': './downloads/audio/%(id)s.%(ext)s',  # The output name should be the id followed by the extension
+        'postprocessors': [{  # Extract audio using ffmpeg
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'm4a',
+        }]
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        error_code = ydl.download([url])
+        print(f"Error Code: {error_code}")
+
+    print("TRANSCRIBE-YT-ASSEMBLY-LOCAL: Finished downloading audio")
+
+    aai.settings.api_key = assembly_api_key
+    config = aai.TranscriptionConfig(speaker_labels=True)
+    filename=f"./downloads/audio/{get_video_id(url)}.m4a"
+    print(f"TRANSCRIBE-YT-ASSEMBLY-LOCAL: Generating transcript for {filename}")
+    transcript = aai.Transcriber().transcribe(filename, config)
+    print(f"TRANSCRIBE-YT-ASSEMBLY-LOCAL: Obtained transcript from {url}")
+    return transcript
 
 
 def transcribe_session_core(youtube_link,assembly_api_key):
-    transcript = transcribe_yt_assembly3(youtube_link,assembly_api_key)
+    transcript = transcribe_yt_assembly_local(youtube_link,assembly_api_key)
     if transcript.status == aai.TranscriptStatus.error:
         return f"Error transcribing audio: {transcript.error}"
     
