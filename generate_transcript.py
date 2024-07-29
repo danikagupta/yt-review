@@ -90,7 +90,8 @@ def download_video_audio(url, external_logger=lambda x: None):
 
 def transcribe_yt_assembly2(url,assembly_api_key):
     aai.settings.api_key = assembly_api_key
-    config = aai.TranscriptionConfig(speaker_labels=True)
+    #config = aai.TranscriptionConfig(speaker_labels=True)
+    config = aai.TranscriptionConfig()
     transcript = aai.Transcriber().transcribe(url, config)
     return transcript
 

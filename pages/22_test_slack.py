@@ -7,9 +7,6 @@ import json
 from google.oauth2 import service_account
 import hashlib
 
-from google_firestore import check_and_add_zoom_session, fetch_document_id, update_session_field_by_id
-from generate_transcript import transcribe_session
-
 
 # Initialize Slack client with your bot token
 slack_token = st.secrets['SLACK_BOT_TOKEN']
@@ -68,17 +65,17 @@ def create_markdown_link(row):
     return f'<a target="_blank" href="{link}">{title}</a>'
 
 def handle_selection(title, url):
-    #print(f"Selected Title: {title}, URL: {url}")
-    st.write(f"Selected Title: {title}")
-    st.write(f"YouTube URL: {url}")
-    json_obj=fetch_document_id(st.session_state.credentials, url)
+    print(f"Selected Title: {title}, URL: {url}")
+    #st.write(f"Selected Title: {title}")
+    #st.write(f"YouTube URL: {url}")
+    #json_obj=fetch_document_id(st.session_state.credentials, url)
     #transcript=f"Document: {json_obj}"
     #st.write(f"Document: {json_obj}")
-    doc_id=json_obj[0]['id']
-    transcript=transcribe_session(url,st.secrets['ASSEMBLYAI_API_KEY'])
+    #doc_id=json_obj[0]['id']
+    #transcript=transcribe_session(url,st.secrets['ASSEMBLYAI_API_KEY'])
     #update_field_by_id(st.session_state.credentials, doc_id, 'transcript', transcript)
-    update_session_field_by_id(st.session_state.credentials, doc_id, 'transcript', transcript, 'transcripted')
-    st.write(transcript)
+    #update_session_field_by_id(st.session_state.credentials, doc_id, 'transcript', transcript, 'transcripted')
+    #st.write(transcript)
 
 def get_google_cloud_credentials():
     # Get Google Cloud credentials from JSON file
@@ -103,7 +100,7 @@ def process_slack_messages(credentials,messages):
         youtube_url = m["attachments"][0]["actions"][0]["url"]
         hash_hex = hashlib.md5(f"{title}-{timestamp}-{youtube_url}".encode()).hexdigest()
         #print(f"Hash: {hash_hex} Title: {title} Timestamp: {timestamp} URL: {youtube_url} ")
-        check_and_add_zoom_session(credentials,hash_hex, title, timestamp, youtube_url)
+        #check_and_add_zoom_session(credentials,hash_hex, title, timestamp, youtube_url)
 
 
 def authenticate():
@@ -115,7 +112,7 @@ def authenticate():
     elif password:
         st.error("Invalid secret key")
 
-def main_page():
+def test_slack():
     # Streamlit app layout
     st.sidebar.title('Slack Message Fetcher')
     credentials = get_google_cloud_credentials()
@@ -164,7 +161,25 @@ def main_page():
             url=st.session_state.df.iloc[row_index]['YouTube URL']
             handle_selection(title, url)
 
+def test_youtube_download():
+    import yt_dlp
+
+    URLS = ['https://www.youtube.com/watch?v=wtolixa9XTg']
+
+    ydl_opts = {
+        'format': 'm4a/bestaudio/best',  # The best audio version in m4a format
+        'outtmpl': '%(id)s.%(ext)s',  # The output name should be the id followed by the extension
+        'postprocessors': [{  # Extract audio using ffmpeg
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'm4a',
+        }]
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        error_code = ydl.download(URLS)
+        print(f"Error Code: {error_code}")
 #
 # Main method for page
 #
-main_page()
+if st.button("Run Youtube download"):
+    test_youtube_download()

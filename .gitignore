@@ -1,5 +1,6 @@
 .streamlit/secrets.toml
 messages.txt
+*.m4a
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

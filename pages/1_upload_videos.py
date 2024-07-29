@@ -10,7 +10,7 @@ from slack_integration import fetch_channels, fetch_messages, get_df_from_messag
 def upload_one_video():
     st.markdown("# Upload Video URL\n Example: https://youtu.be/vgYi3Wr7v_g)")
     yt_url = st.text_input(" ")
-    if st.button("Run"):
+    if st.button("Upload One Video"):
         st.write("Video upload start")
         info=get_update_session_info(yt_url)
         st.table(info)
@@ -29,10 +29,12 @@ def upload_video_list_file():
                     video_list.append(info)
         st.table(video_list)
 
+
+
 def upload_video_list_from_slack(slack_bot_token):
     st.markdown("# Upload Video List from Slack")
     days = st.slider("Select number of days", 1, 1000, value=1000)
-    if st.button("Run"):
+    if st.button("Upload Video List from Slack"):
         channels = fetch_channels(slack_bot_token)
         channel_ids = {channel['name']: channel['id'] for channel in channels}
         channel_id = channel_ids['session-notifications']
