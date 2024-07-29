@@ -101,7 +101,7 @@ def add_transcript(transcript,video_id,url,title, duration):
 def get_new_videos(count=5):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     collection_ref = db.collection(u'videos')
-    query = collection_ref.where('status', '==', 'new').order_by('dateAdded', direction=firestore.Query.DESCENDING).limit(count)
+    query = collection_ref.where('status', '==', 'new').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(count)
     docs = query.stream()
     
     # Collect document IDs that match the query
