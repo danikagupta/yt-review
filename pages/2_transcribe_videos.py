@@ -6,6 +6,8 @@ from google_firestore import find_ytvideo_by_url, update_video_status_transcribi
 from utils import show_navigation
 show_navigation()
 
+from streamlit_app import authenticate
+
 st.title("Transcribe videos")
 
 def transcribe_one_video_with_firestore(url):
@@ -66,11 +68,19 @@ def transcribe_video_from_db():
             transcribe_one_video_with_firestore(url)
         st.markdown(f"Transcription complete for {videoCount} videos")
 
+def main():
+    st.divider()
+    transcribe_one_video()
+    st.divider()
+    transcribe_video_list_file()
+    st.divider()
+    transcribe_video_from_db()
+    st.divider()
 
-st.divider()
-transcribe_one_video()
-st.divider()
-transcribe_video_list_file()
-st.divider()
-transcribe_video_from_db()
-st.divider()
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if st.session_state["authenticated"]:
+        main()
+else:
+        authenticate() 

@@ -4,6 +4,8 @@ import json
 from utils import show_navigation
 show_navigation()
 
+from streamlit_app import authenticate
+
 from session_info import get_update_session_info
 from slack_integration import fetch_channels, fetch_messages, get_df_from_messages
 
@@ -54,11 +56,19 @@ def upload_video_list_from_slack(slack_bot_token):
                 video_list.append(info)
         st.table(video_list)
         
+def main():
+    st.divider()
+    upload_one_video()
+    st.divider()
+    upload_video_list_file()
+    st.divider()
+    upload_video_list_from_slack(st.secrets['SLACK_BOT_TOKEN'])
+    st.divider()
 
-st.divider()
-upload_one_video()
-st.divider()
-upload_video_list_file()
-st.divider()
-upload_video_list_from_slack(st.secrets['SLACK_BOT_TOKEN'])
-st.divider()
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if st.session_state["authenticated"]:
+        main()
+else:
+        authenticate() 

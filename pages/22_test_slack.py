@@ -11,6 +11,8 @@ import hashlib
 from utils import show_navigation
 show_navigation()
 
+from streamlit_app import authenticate
+
 
 # Initialize Slack client with your bot token
 slack_token = st.secrets['SLACK_BOT_TOKEN']
@@ -107,15 +109,6 @@ def process_slack_messages(credentials,messages):
         #check_and_add_zoom_session(credentials,hash_hex, title, timestamp, youtube_url)
 
 
-def authenticate():
-    st.title("Authentication Required")
-    password = st.text_input("Enter the access key:", type="password")
-    if password == st.secrets["ACCESS_KEY"]:
-        st.session_state["authenticated"] = True
-        st.experimental_rerun()
-    elif password:
-        st.error("Invalid secret key")
-
 def test_slack():
     # Streamlit app layout
     st.sidebar.title('Slack Message Fetcher')
@@ -185,21 +178,31 @@ def test_youtube_download():
 #
 # Main method for page
 #
-if st.button("Run Youtube download"):
-    test_youtube_download()
+def main():
+    if st.button("Run Youtube download"):
+        test_youtube_download()
 
-import assemblyai as aai
+    import assemblyai as aai
 
-if st.button("Generate transcript"):
-    filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
-    aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
-    config = aai.TranscriptionConfig(speaker_labels=True)
-    transcript = aai.Transcriber().transcribe(filename, config)
-    st.markdown(transcript)
+    if st.button("Generate transcript"):
+        filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
+        aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
+        config = aai.TranscriptionConfig(speaker_labels=True)
+        transcript = aai.Transcriber().transcribe(filename, config)
+        st.markdown(transcript)
 
-if st.button("Generate Q-n-A"):
-    filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
-    aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
-    config = aai.TranscriptionConfig(speaker_labels=True)
-    transcript = aai.Transcriber().transcribe(filename, config)
-    st.markdown(transcript)
+    if st.button("Generate Q-n-A"):
+        filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
+        aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
+        config = aai.TranscriptionConfig(speaker_labels=True)
+        transcript = aai.Transcriber().transcribe(filename, config)
+        st.markdown(transcript)
+
+
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if st.session_state["authenticated"]:
+        main()
+else:
+        authenticate() 

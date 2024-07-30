@@ -7,6 +7,8 @@ from google_firestore import update_transcript_status_working_on_qna, add_to_qna
 from utils import show_navigation
 show_navigation()
 
+from streamlit_app import authenticate
+
 st.markdown("# Q & A")
 
 def qna_one_video_with_firestore(url):
@@ -52,11 +54,19 @@ def qna_video_from_db():
         st.markdown("Not yet implemented")
 
 
+def main():
+    st.divider()
+    qna_one_video()
+    st.divider()
+    qna_video_list_file()
+    st.divider()
+    qna_video_from_db()
+    st.divider()
 
-st.divider()
-qna_one_video()
-st.divider()
-qna_video_list_file()
-st.divider()
-qna_video_from_db()
-st.divider()
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if st.session_state["authenticated"]:
+        main()
+else:
+        authenticate() 
