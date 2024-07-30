@@ -1,9 +1,33 @@
 import streamlit as st
+from generate_qna import qna_session_core
+
+from google_firestore import update_transcript_status_working_on_qna, add_to_qna, update_transcript_status_qna_done
+
 
 from utils import show_navigation
 show_navigation()
 
 st.markdown("# Q & A")
+
+def qna_one_video_with_firestore(url):
+    # 1. Mark the transcript in Firestore as "new" => "working_on_qna"
+    # 2. Get the transcript
+    # 3. Use LLM to get the Answers
+    # 4. Store the answers in QnA table
+    # 5. Mark the transcript in Firestore as "qna_done"
+    st.markdown("QnA for one transcript with Firestore")
+    transcript=update_transcript_status_working_on_qna(url,True)
+    if transcript:
+        st.markdown(f"Transcript found {transcript} ")
+        responses=qna_session_core(transcript.get('transcript'),st.secrets['OPENAI_API_KEY'])
+        for resp in responses:
+            st.markdown(resp)
+            add_to_qna(resp,transcript['id'],transcript['youtube_url'],transcript['title'],
+                       transcript['duration'],transcript['timestamp'])
+        update_transcript_status_qna_done(transcript['id'])
+    else:
+        st.markdown(f"Transcript not found for {url}")
+        
 
 
 def qna_one_video():
@@ -11,7 +35,7 @@ def qna_one_video():
     yt_url = st.text_input(" ")
     if st.button("Q & A one video"):
         st.write("Q & A video")
-        st.markdown("Not yet implemented")
+        qna_one_video_with_firestore(yt_url)
         #transcribe_one_video_with_firestore(yt_url
 
 def qna_video_list_file():

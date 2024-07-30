@@ -109,6 +109,69 @@ def get_new_videos(count=5):
     results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
     return results   
 
+def update_transcript_status_working_on_qna(url,force=False):
+    print("Invoked update_transcript_status_working_on_qna")
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    collection_ref = db.collection(u'transcripts')
+    query=collection_ref.where('youtube_url', '==', url).order_by('dateAdded', direction=firestore.Query.ASCENDING).limit(1)
+    docs = query.stream()
+    results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
+    print(f"Found {len(results)} transcripts for {url}")
+    #print(f"Results: {results}")
+    if(len(results)==0):
+        print(f"No transcript found for {url}")
+        return None
+    result=results[0] # Only use first result if there are multiple matches
+    if 'status' not in result:
+        result['status']='new'
+    if result['status']!='new' and not force:
+        print(f"Transcript {result['id']} already marked as {result['status']} for {url}. Skipping")
+        return None
+    doc_ref = db.collection(u'transcripts').document(result['id'])
+    doc_ref.set({
+        u'status' : 'working_on_qna',
+        u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+        merge=True)
+    return result
+
+
+
+def add_to_qna(resp,transcript_id,youtube_url,title,duration,timestamp):
+    print(f"Called QnA with parameters:\n {resp}\n Type: {type(resp)}, {transcript_id}, {youtube_url}, {title}, {duration}, {timestamp}")
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    question=resp.question
+    answer=resp.answer
+    hash_id = hashlib.md5(f"{title}-{transcript_id}-{question}-{timestamp}".encode()).hexdigest()
+    doc_ref = db.collection(u'qna').document(hash_id)
+    doc = doc_ref.get()
+    if doc.exists:
+        print(f"Q&A for question {question} already exists for transcript {transcript_id}. Not overwriting")
+        return False
+    else:
+        print(f"Adding Q & A for video: {transcript_id}")
+        doc_ref.set({
+            u'question': question,
+            u'answer': answer,
+            u'transcript_id': transcript_id,
+            u'youtube_url': youtube_url,
+            u'title': title,
+            u'duration': duration,
+            u'timestamp': timestamp,
+            u'dateAdded' : firestore.SERVER_TIMESTAMP,
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP
+        })
+        print(f"Transcript for video {youtube_url} added")
+        return True
+
+def update_transcript_status_qna_done(transcript_id):
+    print("Invoked update_transcript_status_qna_done")
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    doc_ref = db.collection(u'transcripts').document(transcript_id)
+    doc_ref.set({
+            u'status' : 'qna_done',
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+            merge=True)
+
 
 
 xxxxxx="""

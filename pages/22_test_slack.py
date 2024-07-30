@@ -196,3 +196,10 @@ if st.button("Generate transcript"):
     config = aai.TranscriptionConfig(speaker_labels=True)
     transcript = aai.Transcriber().transcribe(filename, config)
     st.markdown(transcript)
+
+if st.button("Generate Q-n-A"):
+    filename='/workspaces/yt-review/downloads/audio/i8N2B6qpA0M.m4a'
+    aai.settings.api_key = st.secrets['ASSEMBLYAI_API_KEY']
+    config = aai.TranscriptionConfig(speaker_labels=True)
+    transcript = aai.Transcriber().transcribe(filename, config)
+    st.markdown(transcript)
