@@ -1,7 +1,7 @@
 import streamlit as st
 from generate_qna import qna_session_core
 
-from google_firestore import update_transcript_status_working_on_qna, add_to_qna, update_transcript_status_qna_done
+from google_firestore import update_transcript_status_working_on_qna, add_to_qna, update_transcript_status_qna_done, get_new_transcripts
 
 
 from utils import show_navigation
@@ -20,7 +20,7 @@ def qna_one_video_with_firestore(url):
     st.markdown("QnA for one transcript with Firestore")
     transcript=update_transcript_status_working_on_qna(url,True)
     if transcript:
-        st.markdown(f"Transcript found {transcript} ")
+        #st.markdown(f"Transcript found {transcript} ")
         responses=qna_session_core(transcript.get('transcript'),st.secrets['OPENAI_API_KEY'])
         for resp in responses:
             st.markdown(resp)
@@ -34,7 +34,7 @@ def qna_one_video_with_firestore(url):
 
 def qna_one_video():
     st.markdown("# Q & A One Video URL\n Example: https://youtu.be/vgYi3Wr7v_g)")
-    yt_url = st.text_input(" ")
+    yt_url = st.text_input("   ")
     if st.button("Q & A one video"):
         st.write("Q & A video")
         qna_one_video_with_firestore(yt_url)
@@ -49,8 +49,19 @@ def qna_video_list_file():
 
 def qna_video_from_db():
     st.markdown("# Q & A Video from Firestore")
-    videoCount = st.slider("Select number of videos", 1, 1000, value=5)
+    transcriptCount = st.slider("Select number of transcripts", 1, 1000, value=5)
     if st.button("Q & A from DB"):
+        transcripts=get_new_transcripts(transcriptCount)
+        print(f"Q & A Video From DB: For count {transcriptCount}\n got {transcripts} transcripts")
+        for iteration_id,transcript in enumerate(transcripts,start=1):
+            id=transcript['id']
+            title=transcript['title']
+            url=transcript['youtube_url']
+            duration=transcript['duration']
+            #txt = transcript['transcript']
+            st.markdown(f"Iteration {iteration_id}: Q&A transcript {title} at {url} with duration {duration}. Id={id}")
+            qna_one_video_with_firestore(url)
+        st.markdown(f"Transcription complete for {transcriptCount} videos")
         st.markdown("Not yet implemented")
 
 

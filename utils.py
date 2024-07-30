@@ -25,6 +25,7 @@ def show_navigation():
         col2.page_link("pages/1_upload_videos.py", label="Upload URL", icon="1️⃣")
         col3.page_link("pages/2_transcribe_videos.py", label="Transcribe", icon="2️⃣")
         col4.page_link("pages/3_qna.py", label="Q & A", icon="🌎")
+        col5.page_link("pages/4_fix_data.py", label="Fix data")
         col5.page_link("pages/22_test_slack.py", label="Just testing")
         #col3.page_link("pages/chat_with_LMStudio.py", label="Chat LM Studio")
         #col4.page_link("pages/2_retreival_augmented_chat.py", label="RAG", icon="🌎")

@@ -39,7 +39,7 @@ def transcribe_one_video_with_firestore(url):
 
 def transcribe_one_video():
     st.markdown("# Transcribe One Video URL\n Example: https://youtu.be/vgYi3Wr7v_g)")
-    yt_url = st.text_input(" ")
+    yt_url = st.text_input("  ")
     if st.button("Transcribe one video"):
         st.write("Transcribing video")
         transcribe_one_video_with_firestore(yt_url)

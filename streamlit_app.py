@@ -8,7 +8,8 @@ def authenticate():
     password = st.text_input("Enter the access key:", type="password")
     if password == st.secrets["ACCESS_KEY"]:
         st.session_state["authenticated"] = True
-        st.rerun()
+        st.button("Continue")
+        #st.rerun()
     elif password:
         st.error("Invalid secret key")
 

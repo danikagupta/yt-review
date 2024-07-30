@@ -93,6 +93,7 @@ def add_transcript(transcript,video_id,url,title, duration,timestamp):
             u'title': title,
             u'duration': duration,
             u'timestamp': timestamp,
+            u'status' : 'new',
             u'dateAdded' : firestore.SERVER_TIMESTAMP,
             u'dateUpdated' : firestore.SERVER_TIMESTAMP
         })
@@ -108,6 +109,17 @@ def get_new_videos(count=5):
     # Collect document IDs that match the query
     results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
     return results   
+
+
+def get_new_transcripts(count=5):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    collection_ref = db.collection(u'transcripts')
+    query = collection_ref.where('status', '==', 'new').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(count)
+    docs = query.stream()
+    
+    # Collect document IDs that match the query
+    results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
+    return results 
 
 def update_transcript_status_working_on_qna(url,force=False):
     print("Invoked update_transcript_status_working_on_qna")
@@ -172,6 +184,21 @@ def update_transcript_status_qna_done(transcript_id):
             u'dateUpdated' : firestore.SERVER_TIMESTAMP},
             merge=True)
 
+def fix_transcripts_status_new():
+    print("Invoked fix_transcripts_status_new")
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    collection_ref = db.collection(u'transcripts')
+    docs=collection_ref.stream()
+    for doc in docs:
+        data=doc.to_dict()
+        if 'status' not in data:
+            print(f"Updating transcript {doc.id} to 'new'")
+            doc_ref = db.collection(u'transcripts').document(doc.id)
+            doc_ref.set({
+                u'status' : 'new',
+                u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+                merge=True)
+    print("Finished fix_transcripts_status_new")        
 
 
 xxxxxx="""
