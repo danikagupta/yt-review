@@ -77,7 +77,7 @@ def add_video_to_firestore(info):
         print(f"Session {hash_id} added")
         return
 
-def add_transcript(transcript,video_id,url,title, duration):
+def add_transcript(transcript,video_id,url,title, duration,timestamp):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     doc_ref = db.collection(u'transcripts').document(video_id)
     doc = doc_ref.get()
@@ -92,6 +92,7 @@ def add_transcript(transcript,video_id,url,title, duration):
             u'youtube_url': url,
             u'title': title,
             u'duration': duration,
+            u'timestamp': timestamp,
             u'dateAdded' : firestore.SERVER_TIMESTAMP,
             u'dateUpdated' : firestore.SERVER_TIMESTAMP
         })

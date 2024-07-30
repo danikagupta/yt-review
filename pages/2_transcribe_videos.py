@@ -27,7 +27,7 @@ def transcribe_one_video_with_firestore(url):
     vid=vids[0]
     #st.markdown(vid) 
     msg=transcribe_session_core(url,st.secrets['ASSEMBLYAI_API_KEY'])
-    addedTranscript = add_transcript(msg,vid['id'],url,vid['title'],vid['duration'])
+    addedTranscript = add_transcript(msg,vid['id'],url,vid['title'],vid['duration'],vid['timestamp'])
     if(addedTranscript):
         st.markdown("Transcription added to Firestore")
         update_video_status_transcribed(vid['id']) 
@@ -54,7 +54,7 @@ def transcribe_video_list_file():
 
 def transcribe_video_from_db():
     st.markdown("# Transcribe Video from Firestore")
-    videoCount = st.slider("Select number of videos", 1, 1000, value=5)
+    videoCount = st.number_input("Select number of videos", value=5)
     if st.button("Transcribe from DB"):
         videos=get_new_videos(videoCount)
         for iteration_id,video in enumerate(videos,start=1):

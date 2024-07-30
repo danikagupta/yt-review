@@ -33,7 +33,7 @@ def upload_video_list_file():
 
 def upload_video_list_from_slack(slack_bot_token):
     st.markdown("# Upload Video List from Slack")
-    days = st.slider("Select number of days", 1, 1000, value=1000)
+    days = st.number_input("Select number of days", value=2)
     if st.button("Upload Video List from Slack"):
         channels = fetch_channels(slack_bot_token)
         channel_ids = {channel['name']: channel['id'] for channel in channels}
