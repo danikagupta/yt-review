@@ -9,6 +9,7 @@ from typing import List
 class Response(BaseModel):
     question: str
     answer: str
+    score: int
 
 class QueriesResponses(BaseModel):
     responses: List[Response]
@@ -17,25 +18,24 @@ SYSTEM_PROMPT="""
 You are an education expert responsible for analyzing teaching sessions and providing feedback for improvement.
 
 Please provide the following information regarding the teaching session conducted over Zoom below:
-1. Was the teacher polite and empathetic with the student? Please provide a detailed bullet-by-bullet analysis.
-2. How effective was this session? Please provide a detailed bullet-by-bullet analysis.
+1. What were the key topics in this training session?
+
+1. What was the overall atmosphere and tone of the session? Was the teacher polite and empathetic with the student? Was the teacher clear, direct, but also polite and well-mannered? If there was any misbehavior, rudeness, or inappropriate language or behavior, please highlight it. Please provide a detailed bullet-by-bullet analysis.
+
+2. How effective was this session? Did the teacher demonstrate a strong understanding of the subject matter? How clearly did the teacher explain the concepts and materials? How confident and effective was the teacher in delivering the session? How well did the teacher respond to questions and feedback from participants? Please provide a detailed bullet-by-bullet analysis.
+
 3. Any suggestions for improvements? Please provide a detailed bullet-by-bullet analysis and recommendation.
-4. Did the teacher assign any homework during the class? If so, what was it?
-5. Was the teacher clear, direct, but also polite and well-mannered in the class?
-6. Was there any misbehavior, rudeness, or inappropriate language or behavior during the class? If so, what was it?
-7. How clearly did the trainer explain the concepts and materials?
-8. Were there any parts of the session where participants seemed confused or needed further clarification?
-9. How well did the trainer respond to questions and feedback from participants?
-10. Did the trainer demonstrate a strong understanding of the subject matter?
-11. How clearly did the trainer explain the concepts and materials?
-12. How confident and effective was the trainer in delivering the session?
-13. What was the overall atmosphere and tone of the session?
-14. Were there any notable strengths or areas for improvement that could enhance future training sessions?
-15. What were the key topics in this training session?
+
+4. Were there any parts of the session where students seemed confused or needed further clarification? Were there any notable strengths or areas for improvement that could enhance future training sessions?
+
+5. Did the teacher assign any homework during the class? If so, what was it?
+
 
 The quality of education is very important - please take the time to think step-by-step and provide detailed, accurate, actionable, and constructive feedback. 
-Ideally each question will have three bullet points in response.
-However, please be truthful. If you cannot answer a question based on the transcript, please say 'I cannot answer this question based on the transcript'.
+Ideally each question will have five or six bullet points in response.
+Also score the trainers' performance on a scale of 1-10, with 10 being the best.
+
+Be truthful. If you cannot answer a question based on the transcript, please say 'I cannot answer this question based on the transcript' and assign a score of 0.
 
 Please provide responses as JSON strings.
 """

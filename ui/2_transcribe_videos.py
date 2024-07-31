@@ -46,14 +46,6 @@ def transcribe_one_video():
         #trs=transcribe_session_core(yt_url,st.secrets['ASSEMBLYAI_API_KEY'])
         #st.markdown(trs)
 
-def transcribe_video_list_file():
-    st.markdown("Upload a CSV file with a list of video URLs")
-    st.markdown("# Transcribe Video List File")
-    video_list_file = st.file_uploader("Upload Video List File", type=["csv"])
-    if st.button("Transcribe from file"):
-        st.markdown("Not yet implemented")
-
-
 def transcribe_video_from_db():
     st.markdown("# Transcribe Video from Firestore")
     videoCount = st.number_input("Select number of videos", value=5)
@@ -71,8 +63,6 @@ def transcribe_video_from_db():
 def main():
     st.divider()
     transcribe_one_video()
-    st.divider()
-    transcribe_video_list_file()
     st.divider()
     transcribe_video_from_db()
     st.divider()

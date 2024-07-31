@@ -40,16 +40,9 @@ def qna_one_video():
         qna_one_video_with_firestore(yt_url)
         #transcribe_one_video_with_firestore(yt_url
 
-def qna_video_list_file():
-    st.markdown("Upload a CSV file with a list of video URLs")
-    st.markdown("# Q & A Video List File")
-    video_list_file = st.file_uploader("Upload Video List File", type=["csv"])
-    if st.button("Q & A from file"):
-        st.markdown("Not yet implemented")
-
 def qna_video_from_db():
     st.markdown("# Q & A Video from Firestore")
-    transcriptCount = st.slider("Select number of transcripts", 1, 1000, value=5)
+    transcriptCount = st.number_input("Select number of transcripts", value=5)
     if st.button("Q & A from DB"):
         transcripts=get_new_transcripts(transcriptCount)
         print(f"Q & A Video From DB: For count {transcriptCount}\n got {transcripts} transcripts")
@@ -61,15 +54,12 @@ def qna_video_from_db():
             #txt = transcript['transcript']
             st.markdown(f"Iteration {iteration_id}: Q&A transcript {title} at {url} with duration {duration}. Id={id}")
             qna_one_video_with_firestore(url)
-        st.markdown(f"Transcription complete for {transcriptCount} videos")
-        st.markdown("Not yet implemented")
+        st.markdown(f"QnA complete for {transcriptCount} videos")
 
 
 def main():
     st.divider()
     qna_one_video()
-    st.divider()
-    qna_video_list_file()
     st.divider()
     qna_video_from_db()
     st.divider()

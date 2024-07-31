@@ -153,6 +153,10 @@ def add_to_qna(resp,transcript_id,youtube_url,title,duration,timestamp):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     question=resp.question
     answer=resp.answer
+    try:
+        score=resp.score
+    except:
+        score=0
     hash_id = hashlib.md5(f"{title}-{transcript_id}-{question}-{timestamp}".encode()).hexdigest()
     doc_ref = db.collection(u'qna').document(hash_id)
     doc = doc_ref.get()
@@ -161,6 +165,7 @@ def add_to_qna(resp,transcript_id,youtube_url,title,duration,timestamp):
         doc_ref.set({
             u'question': question,
             u'answer': answer,
+            u'score': score,
             u'transcript_id': transcript_id,
             u'youtube_url': youtube_url,
             u'title': title,
@@ -176,6 +181,7 @@ def add_to_qna(resp,transcript_id,youtube_url,title,duration,timestamp):
         doc_ref.set({
             u'question': question,
             u'answer': answer,
+            u'score': score,
             u'transcript_id': transcript_id,
             u'youtube_url': youtube_url,
             u'title': title,

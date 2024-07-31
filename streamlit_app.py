@@ -8,7 +8,10 @@ def authenticate():
     password = st.text_input("Enter the access key:", type="password")
     if password == st.secrets["ACCESS_KEY"]:
         st.session_state["authenticated"] = True
-        st.button("Continue")
+        if st.button("Continue"):
+            #st.switch_page("ui/12_transcript_list.py")
+            st.switch_page("Transcript List")
+
         #st.rerun()
     elif password:
         st.error("Invalid secret key")
@@ -24,24 +27,24 @@ def main():
 
         user_pages=[
             st.Page("streamlit_app.py", title="Home", icon="🏠"),
-            st.Page("pages/12_transcript_list.py", title="Transcript List", icon="1️⃣"),
-            st.Page("pages/14_transcript_yt_video.py", title="Transcript YT Video", icon="2️⃣"),
-            st.Page("pages/11_transcripts_with_answers.py", title="Transcript Q&A", icon="🌎"),
+            st.Page("ui/12_transcript_list.py", title="Transcript List", icon="1️⃣"),
+            #st.Page("ui/14_transcript_yt_video.py", title="Transcript YT Video", icon="2️⃣"),
+            #st.Page("ui/11_transcripts_with_answers.py", title="Transcript Q&A", icon="🌎"),
         ]
 
         update_pages=[
-            st.Page("pages/1_upload_videos.py", title="Upload URL", icon="1️⃣"),
-            st.Page("pages/2_transcribe_videos.py", title="Transcribe", icon="2️⃣"),
-            st.Page("pages/3_qna.py", title="Q & A", icon="🌎"),
+            st.Page("ui/1_upload_videos.py", title="Upload URL", icon="1️⃣"),
+            st.Page("ui/2_transcribe_videos.py", title="Transcribe", icon="2️⃣"),
+            st.Page("ui/3_qna.py", title="Q & A", icon="🌎"),
         ]
 
         fix_pages=[
-            st.Page("pages/4_fix_data.py", title="Fix data"),
-            st.Page("pages/22_test_slack.py", title="Just testing"),
+            st.Page("ui/4_fix_data.py", title="Fix data"),
+            st.Page("ui/22_test_slack.py", title="More testing"),
         ]
         pages={
             "User": user_pages,
-            "Update": update_pages,
+            "Admin": update_pages,
             "Fix": fix_pages,
         }
         pg = st.navigation(pages)

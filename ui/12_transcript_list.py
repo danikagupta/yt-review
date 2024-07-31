@@ -1,6 +1,7 @@
 import streamlit as st
 
 from google_firestore import get_total_transcripts, get_transcripts, get_qna_by_transcript_id, get_transcripts_by_video_id, get_transcripts_by_youtube_url
+from show_one_qna import show_transcript_qa_one_yt_video
 
 from streamlit_app import authenticate
 
@@ -22,7 +23,13 @@ def main():
         video_id=d.get('video_id','')
         show_list.append({'Title':title,'youtube_url':youtube_url,'timestamp':timestamp,'duration':duration })
         #st.write(f"Transcript: {tr['data']['title']}")
-    st.dataframe(show_list)
+    event=st.dataframe(show_list, on_select='rerun', selection_mode='single-row')
+    print(f"Event: {event}")
+    if(len(event.selection['rows']))>0:
+        selected_row=event.selection['rows'][0]
+        selected_transcript=transcripts[selected_row]['data']
+        #st.write(f"Selected transcript: {selected_transcript}")
+        show_transcript_qa_one_yt_video(selected_transcript.get('youtube_url',''))
 
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
