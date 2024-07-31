@@ -43,8 +43,8 @@ def upload_video_list_from_slack(slack_bot_token):
         messages = fetch_messages(slack_bot_token, channel_id, days)
 
         print(f"upload_video_list_from_slack Messages: {messages}")
-        with open('messages.txt', 'w') as file:
-            json.dump(messages,file)
+        #with open('messages.txt', 'w') as file:
+        #    json.dump(messages,file)
         df=get_df_from_messages(messages)
         st.markdown(f"### {len(df)} videos found")
         st.table(df)

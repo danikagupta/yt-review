@@ -23,7 +23,8 @@ def qna_one_video_with_firestore(url):
         #st.markdown(f"Transcript found {transcript} ")
         responses=qna_session_core(transcript.get('transcript'),st.secrets['OPENAI_API_KEY'])
         for resp in responses:
-            st.markdown(resp)
+            with st.expander("Response"):
+                st.siderbar.markdown(resp)
             add_to_qna(resp,transcript['id'],transcript['youtube_url'],transcript['title'],
                        transcript['duration'],transcript['timestamp'])
         update_transcript_status_qna_done(transcript['id'])

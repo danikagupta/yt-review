@@ -1,7 +1,8 @@
 import streamlit as st
 from google_firestore import get_qna_by_transcript_id, get_transcripts_by_youtube_url
+from generate_qna import qna_one_question
 
-def show_transcript_qa_one_yt_video(yt_url):
+def show_transcript_qa_one_yt_video(yt_url, openai_api_key):
     transcripts=get_transcripts_by_youtube_url(yt_url)
     print(f"Transcripts: {transcripts} for URL :{yt_url}:")
     t=transcripts[0]
@@ -9,8 +10,8 @@ def show_transcript_qa_one_yt_video(yt_url):
     #st.markdown(f"Title: {t['title']}")
     #st.markdown(f"Timestamp: {t['timestamp']}")
     
-    with st.sidebar.expander("Transcript Debug"):
-        st.markdown(t)
+    #with st.sidebar.expander("Transcript Debug"):
+    #    st.markdown(t)
     txt=t['transcript']
     with st.sidebar.expander("Transcript"):
         st.markdown(txt)
@@ -18,15 +19,21 @@ def show_transcript_qa_one_yt_video(yt_url):
 
     video_id=t['video_id']
     qna_set=get_qna_by_transcript_id(video_id)
-    with st.sidebar.expander("Q & A debug"):
-        st.write(qna_set)
+    #with st.sidebar.expander("Q & A debug"):
+    #    st.write(qna_set)
+
+    #new_question=st.text_input("New Question")
+    #if new_question:
+    #    responses=qna_one_question(txt,new_question,openai_api_key)
+    #    for resp in responses:
+    #        st.markdown(f" Response: {resp}")
 
     qna_display=[]
     for qna in qna_set:
         qna_display.append({'Question':qna['question'],'Answer':qna['answer']})
     
-    with st.sidebar.expander("Q & A"):
-        st.dataframe(qna_display)
+    #with st.sidebar.expander("Q & A"):
+    #    st.dataframe(qna_display)
     for qna in qna_set:
         st.markdown(f"\n\n### Q: {qna['question']}")
         st.markdown(f"A: {qna['answer']}")  

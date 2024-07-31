@@ -72,6 +72,7 @@ def get_qna_stats():
 
 
 def main():
+    st.button("Refresh")
     st.divider()
     st.markdown("# Videos")
     st.dataframe(get_video_stats())    

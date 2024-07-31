@@ -50,3 +50,28 @@ def qna_session_core(transcript,openai_api_key):
         HumanMessage(content=f"The trascript is: {transcript}")
         ])
     return queries.responses
+
+
+def qna_one_question(transcript,question,openai_api_key):
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+    model = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
+    system_prompt=f"""
+You are an education expert responsible for analyzing teaching sessions and providing feedback for improvement.
+
+Please provide the following information regarding the teaching session conducted over Zoom below:
+
+{question}
+
+The quality of education is very important - please take the time to think step-by-step and provide detailed, accurate, actionable, and constructive feedback. 
+Ideally each question will have five or six bullet points in response.
+Also score the trainers' performance on a scale of 1-10, with 10 being the best.
+
+Be truthful. If you cannot answer a question based on the transcript, please say 'I cannot answer this question based on the transcript' and assign a score of 0.
+
+Please provide responses as JSON strings.
+    """
+    queries = model.with_structured_output(QueriesResponses).invoke([
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=f"The trascript is: {transcript}")
+        ])
+    return queries.responses

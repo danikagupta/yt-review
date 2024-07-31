@@ -29,7 +29,7 @@ def main():
         selected_row=event.selection['rows'][0]
         selected_transcript=transcripts[selected_row]['data']
         #st.write(f"Selected transcript: {selected_transcript}")
-        show_transcript_qa_one_yt_video(selected_transcript.get('youtube_url',''))
+        show_transcript_qa_one_yt_video(selected_transcript.get('youtube_url',''),st.secrets['OPENAI_API_KEY'])
 
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
