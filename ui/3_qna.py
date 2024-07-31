@@ -24,7 +24,7 @@ def qna_one_video_with_firestore(url):
         responses=qna_session_core(transcript.get('transcript'),st.secrets['OPENAI_API_KEY'])
         for resp in responses:
             with st.expander("Response"):
-                st.siderbar.markdown(resp)
+                st.sidebar.markdown(resp)
             add_to_qna(resp,transcript['id'],transcript['youtube_url'],transcript['title'],
                        transcript['duration'],transcript['timestamp'])
         update_transcript_status_qna_done(transcript['id'])
