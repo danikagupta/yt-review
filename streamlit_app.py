@@ -39,6 +39,7 @@ def main():
         ]
 
         fix_pages=[
+            st.Page("ui/31_processing_stats.py", title="Processing stats"),
             st.Page("ui/4_fix_data.py", title="Fix data"),
             st.Page("ui/22_test_slack.py", title="More testing"),
         ]
