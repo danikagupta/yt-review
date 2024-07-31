@@ -221,6 +221,30 @@ def fix_transcripts_status_new():
                 merge=True)
     print("Finished fix_transcripts_status_new")    
 
+def force_transcripts_status_new():
+    print("Invoked fix_transcripts_status_new")
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    collection_ref = db.collection(u'transcripts')
+    docs=collection_ref.stream()
+    for doc in docs:
+        data=doc.to_dict()
+        if 'status' not in data:
+            print(f"Updating transcript {doc.id} to 'new'")
+            doc_ref = db.collection(u'transcripts').document(doc.id)
+            doc_ref.set({
+                u'status' : 'new',
+                u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+                merge=True)
+        else:
+            if data['status']!='new':
+                print(f"Updating transcript {doc.id} to 'new'")
+                doc_ref = db.collection(u'transcripts').document(doc.id)
+                doc_ref.set({
+                    u'status' : 'new',
+                    u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+                    merge=True)
+    print("Finished force_transcripts_status_new") 
+
 def fix_transcripts_timestamp():  
     print("Invoked fix_transcripts_timestamps")
     db = firestore.Client(credentials=get_google_cloud_credentials())
