@@ -12,8 +12,8 @@ from streamlit_app import authenticate
 st.markdown("# Low-scoring answers")
 
 def main():
-    values = st.slider("Define low range", 0, 10, (1, 5))
-    min_duration = st.number_input("Minimum duration in minutes", value=0)
+    values = st.slider("Define low range", 0, 10, (1, 6))
+    min_duration = st.number_input("Min duration in minutes", value=30)
     if st.button("Run analysis"):
         qnas=get_qna_range(values[0],values[1])
         dataset=[]
