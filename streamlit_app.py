@@ -46,7 +46,7 @@ def main():
         pages={
             "User": user_pages,
             "Admin": update_pages,
-            "Fix": fix_pages,
+            "Bulk": fix_pages,
         }
         pg = st.navigation(pages)
         pg.run()

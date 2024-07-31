@@ -275,12 +275,20 @@ def get_total_transcripts():
     db = firestore.Client(credentials=get_google_cloud_credentials())
     return db.collection('transcripts').count().get()[0][0].value
 
-def get_qna_by_transcript_id(transcript_id):
+def get_qna_by_transcript_id_OLD(transcript_id):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     qna = db.collection('qna').where('transcript_id', '==', transcript_id).stream()
     return [doc.to_dict() for doc in qna]
 
-def get_transcripts_by_video_id(transcript_id):
+def get_qna_by_transcript_id(transcript_id):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    qna = db.collection('qna').where('transcript_id', '==', transcript_id).order_by('dateAdded', direction=firestore.Query.DESCENDING).stream()
+    return [doc.to_dict() for doc in qna]
+
+
+# .order_by('timestamp', direction=firestore.Query.DESCENDING).limit(per_page).offset((page - 1) * per_page).stream()
+
+def get_transcripts_by_video_id(video_id):
     db = firestore.Client(credentials=get_google_cloud_credentials())
     qna = db.collection('transcripts').where('video_id', '==', video_id).stream()
     return [doc.to_dict() for doc in qna]

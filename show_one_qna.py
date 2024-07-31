@@ -8,11 +8,13 @@ def show_transcript_qa_one_yt_video(yt_url):
     #st.markdown(f"Video {yt_url}")
     #st.markdown(f"Title: {t['title']}")
     #st.markdown(f"Timestamp: {t['timestamp']}")
+    
     with st.sidebar.expander("Transcript Debug"):
         st.markdown(t)
     txt=t['transcript']
-    with st.expander("Transcript"):
+    with st.sidebar.expander("Transcript"):
         st.markdown(txt)
+    st.download_button("Download Transcript", txt, f"{t['title']}.txt", "txt")
 
     video_id=t['video_id']
     qna_set=get_qna_by_transcript_id(video_id)
