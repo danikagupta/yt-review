@@ -25,6 +25,7 @@ def main():
         user_pages=[
             st.Page("streamlit_app.py", title="Home", icon="🏠"),
             st.Page("pages/12_transcript_list.py", title="Transcript List", icon="1️⃣"),
+            st.Page("pages/14_transcript_yt_video.py", title="Transcript YT Video", icon="2️⃣"),
             st.Page("pages/11_transcripts_with_answers.py", title="Transcript Q&A", icon="🌎"),
         ]
 
