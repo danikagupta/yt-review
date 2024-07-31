@@ -316,3 +316,8 @@ def get_all_qna():
     db = firestore.Client(credentials=get_google_cloud_credentials())
     qnas = db.collection('qna').stream()
     return [{'id': doc.id, 'data': doc.to_dict()} for doc in qnas]
+
+def get_qna_range(min_value, max_value):
+    db = firestore.Client(credentials=get_google_cloud_credentials())
+    qnas = db.collection('qna').where('score','>=',min_value).where('score','<=',max_value).stream()
+    return [{'id': doc.id, 'data': doc.to_dict()} for doc in qnas]

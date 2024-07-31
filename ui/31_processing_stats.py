@@ -9,7 +9,7 @@ show_navigation()
 
 from streamlit_app import authenticate
 
-st.markdown("# Fix data")
+st.markdown("# Processing stats")
 
 def get_video_stats():
     videos=get_all_videos()

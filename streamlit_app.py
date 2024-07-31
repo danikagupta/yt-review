@@ -32,21 +32,22 @@ def main():
             #st.Page("ui/11_transcripts_with_answers.py", title="Transcript Q&A", icon="🌎"),
         ]
 
-        update_pages=[
+        admin_pages=[
             st.Page("ui/1_upload_videos.py", title="Upload URL", icon="1️⃣"),
             st.Page("ui/2_transcribe_videos.py", title="Transcribe", icon="2️⃣"),
             st.Page("ui/3_qna.py", title="Q & A", icon="🌎"),
         ]
 
-        fix_pages=[
+        bulk_pages=[
             st.Page("ui/31_processing_stats.py", title="Processing stats"),
+            st.Page("ui/32_qna_low_score.py", title="Low score Q-&-A"),
             st.Page("ui/4_fix_data.py", title="Fix data"),
             st.Page("ui/22_test_slack.py", title="More testing"),
         ]
         pages={
             "User": user_pages,
-            "Admin": update_pages,
-            "Bulk": fix_pages,
+            "Admin": admin_pages,
+            "Bulk": bulk_pages,
         }
         pg = st.navigation(pages)
         pg.run()
