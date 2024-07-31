@@ -157,7 +157,19 @@ def add_to_qna(resp,transcript_id,youtube_url,title,duration,timestamp):
     doc_ref = db.collection(u'qna').document(hash_id)
     doc = doc_ref.get()
     if doc.exists:
-        print(f"Q&A for question {question} already exists for transcript {transcript_id}. Not overwriting")
+        print(f"Q&A for question {question} already exists for transcript {transcript_id}. Overwriting")
+        doc_ref.set({
+            u'question': question,
+            u'answer': answer,
+            u'transcript_id': transcript_id,
+            u'youtube_url': youtube_url,
+            u'title': title,
+            u'duration': duration,
+            u'timestamp': timestamp,
+            u'dateAdded' : firestore.SERVER_TIMESTAMP,
+            u'dateUpdated' : firestore.SERVER_TIMESTAMP
+        })
+        print(f"Transcript for video {youtube_url} added")
         return False
     else:
         print(f"Adding Q & A for video: {transcript_id}")
@@ -184,6 +196,9 @@ def update_transcript_status_qna_done(transcript_id):
             u'dateUpdated' : firestore.SERVER_TIMESTAMP},
             merge=True)
 
+#
+# Fix
+#
 def fix_transcripts_status_new():
     print("Invoked fix_transcripts_status_new")
     db = firestore.Client(credentials=get_google_cloud_credentials())
@@ -198,61 +213,39 @@ def fix_transcripts_status_new():
                 u'status' : 'new',
                 u'dateUpdated' : firestore.SERVER_TIMESTAMP},
                 merge=True)
-    print("Finished fix_transcripts_status_new")        
+    print("Finished fix_transcripts_status_new")    
 
-
-xxxxxx="""
-def fetch_sessions_with_transcripts(credentials):
+def fix_transcripts_timestamp():  
+    print("Invoked fix_transcripts_timestamps")
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    collection_ref = db.collection(u'sessions')
-    query = collection_ref.where('status', '==', 'transcripted')
-    docs = query.stream()
-    
-    # Collect document IDs that match the query
-    results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
-    return results
-    
-def fetch_document_id(credentials, url):
+    collection_ref = db.collection(u'transcripts')
+    docs=collection_ref.stream()
+    for doc in docs:
+        data=doc.to_dict()
+        if 'timestamp' not in data: 
+            records=find_ytvideo_by_url(data['youtube_url'])
+            print(f"Fix transcript {doc.id} records {records}")
+            timestamp=records[0]['timestamp']
+            doc_ref = db.collection(u'transcripts').document(doc.id)
+            doc_ref.set({
+                u'timestamp' : timestamp,
+                u'dateUpdated' : firestore.SERVER_TIMESTAMP},
+                merge=True) 
+
+#
+# Display
+#
+
+def get_transcripts(page, per_page):
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    collection_ref = db.collection(u'sessions')
-    query = collection_ref.where('youtube_url', '==', url)
-    docs = query.stream()
-    
-    # Collect document IDs that match the query
-    results = [{'id': doc.id, **doc.to_dict()} for doc in docs]
-    return results
+    transcripts = db.collection('transcripts').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(per_page).offset((page - 1) * per_page).stream()
+    return [{'id': doc.id, 'data': doc.to_dict()} for doc in transcripts]
 
-def update_session_field_by_id(credentials, document_id, field_name, new_value, new_status):
+def get_total_transcripts():
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    collection_ref = db.collection(u'sessions')
-    
-    # Reference to the specific document within the collection
-    document_ref = collection_ref.document(document_id)
-    
-    # Update the field in the document
-    document_ref.update({field_name: new_value, 'status': new_status})
-    print(f"Document {document_id} updated: {field_name} = {new_value}")
+    return db.collection('transcripts').count().get()[0][0].value
 
-    
-def check_and_add_zoom_session(credentials,hash_id,title,timestamp,youtube_url):
+def get_qna(transcript_id):
     db = firestore.Client(credentials=get_google_cloud_credentials())
-    doc_ref = db.collection(u'sessions').document(hash_id)
-    doc = doc_ref.get()
-    if doc.exists:
-        #print(f"Session {hash_id} already exists")
-        return
-    else:
-        #print(f"Adding session: {hash_id}")
-        doc_ref.set({
-            u'title': title,
-            u'timestamp': timestamp,
-            u'youtube_url': youtube_url,
-            u'status' : 'new',
-            u'dateAdded' : firestore.SERVER_TIMESTAMP,
-            u'dateUpdated' : firestore.SERVER_TIMESTAMP
-        })
-        #print(f"Session {hash_id} added")
-        return
-
-
-"""
+    qna = db.collection('qna').where('transcriptId', '==', transcript_id).stream()
+    return [doc.to_dict() for doc in qna]

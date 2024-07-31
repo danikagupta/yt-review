@@ -31,8 +31,11 @@ Please provide the following information regarding the teaching session conducte
 12. How confident and effective was the trainer in delivering the session?
 13. What was the overall atmosphere and tone of the session?
 14. Were there any notable strengths or areas for improvement that could enhance future training sessions?
+15. What were the key topics in this training session?
 
-The quality of education is very important - please take the time to think step-by-step and provide detailed, accurate, actionable, and constructive feedback. Ideally each question will have three bullet points in response.
+The quality of education is very important - please take the time to think step-by-step and provide detailed, accurate, actionable, and constructive feedback. 
+Ideally each question will have three bullet points in response.
+However, please be truthful. If you cannot answer a question based on the transcript, please say 'I cannot answer this question based on the transcript'.
 
 Please provide responses as JSON strings.
 """
@@ -44,6 +47,6 @@ def qna_session_core(transcript,openai_api_key):
     model = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
     queries = model.with_structured_output(QueriesResponses).invoke([
         SystemMessage(content=SYSTEM_PROMPT),
-        HumanMessage(content=transcript)
+        HumanMessage(content=f"The trascript is: {transcript}")
         ])
     return queries.responses

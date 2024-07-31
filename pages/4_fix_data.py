@@ -1,6 +1,6 @@
 import streamlit as st
 
-from google_firestore import fix_transcripts_status_new
+from google_firestore import fix_transcripts_status_new, fix_transcripts_timestamp
 
 
 from utils import show_navigation
@@ -15,6 +15,8 @@ def main():
     st.divider()
     if st.button("Fix transcript status New"):
         fix_transcripts_status_new()
+    if st.button("Fix transcript timestamp"):
+        fix_transcripts_timestamp()
     st.divider()
 
 if "authenticated" not in st.session_state:
