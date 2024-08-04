@@ -2,9 +2,9 @@ import streamlit as st
 from google_firestore import get_qna_by_transcript_id, get_transcripts_by_youtube_url
 from generate_qna import qna_one_question
 
-def show_transcript_qa_one_yt_video(yt_url, openai_api_key):
+def show_transcript_one_yt_video(yt_url, openai_api_key):
     transcripts=get_transcripts_by_youtube_url(yt_url)
-    print(f"Transcripts: {transcripts} for URL :{yt_url}:")
+    #print(f"Transcripts: {transcripts} for URL :{yt_url}:")
     t=transcripts[0]
     #st.markdown(f"Video {yt_url}")
     #st.markdown(f"Title: {t['title']}")
@@ -17,6 +17,11 @@ def show_transcript_qa_one_yt_video(yt_url, openai_api_key):
         st.markdown(txt)
     st.download_button("Download Transcript", txt, f"{t['title']}.txt", "txt")
 
+
+
+def show_qa_one_yt_video(yt_url, openai_api_key):
+    transcripts=get_transcripts_by_youtube_url(yt_url)
+    t=transcripts[0]
     video_id=t['video_id']
     qna_set=get_qna_by_transcript_id(video_id)
     #with st.sidebar.expander("Q & A debug"):

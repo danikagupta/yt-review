@@ -1,7 +1,8 @@
 import streamlit as st
 
 from google_firestore import get_total_transcripts, get_transcripts, get_qna_by_transcript_id, get_transcripts_by_video_id, get_transcripts_by_youtube_url
-from show_one_qna import show_transcript_qa_one_yt_video
+from show_one_qna import show_transcript_one_yt_video, show_qa_one_yt_video
+from generate_qna import qna_one_question
 
 from streamlit_app import authenticate
 
@@ -9,6 +10,19 @@ from math import ceil
 
 
 st.markdown("# Transcripts available")
+
+@st.fragment
+def ask_one_question(transcript,api_key):
+    question = st.text_input("Ask a question about this session")
+    if question:
+        st.markdown(f"Here is a dummy answer for question: {question}")
+        responses=qna_one_question(transcript,question,api_key)
+        print(f"Responses: {responses}, TYPE: {type(responses)}")
+        for rsp in responses:
+            print(f"Response: {rsp}")
+            st.markdown(f"\n\n### Q: {rsp.question}")
+            st.markdown(f"A: {rsp.answer}")  
+            st.markdown(f"**Score: {rsp.score}**")
 
 def main():
     transcripts = get_transcripts(1,2000)
@@ -29,7 +43,11 @@ def main():
         selected_row=event.selection['rows'][0]
         selected_transcript=transcripts[selected_row]['data']
         #st.write(f"Selected transcript: {selected_transcript}")
-        show_transcript_qa_one_yt_video(selected_transcript.get('youtube_url',''),st.secrets['OPENAI_API_KEY'])
+        show_transcript_one_yt_video(selected_transcript.get('youtube_url',''),st.secrets['OPENAI_API_KEY'])
+        st.divider()
+        ask_one_question(selected_transcript.get('youtube_url',''),st.secrets['OPENAI_API_KEY'])
+        st.divider()
+        show_qa_one_yt_video(selected_transcript.get('youtube_url',''),st.secrets['OPENAI_API_KEY'])
 
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False

@@ -74,4 +74,5 @@ Please provide responses as JSON strings.
         SystemMessage(content=system_prompt),
         HumanMessage(content=f"The trascript is: {transcript}")
         ])
+    print(f"Queries: {queries}")
     return queries.responses
