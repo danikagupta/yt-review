@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 #from utils import show_navigation
 #show_navigation()
@@ -17,6 +18,8 @@ def authenticate():
         st.error("Invalid secret key")
 
 def main():
+    os.environ["LANGCHAIN_TRACING_V2"]="true"
+    os.environ["LANGCHAIN_API_KEY"]=st.secrets['LANGCHAIN_API_KEY']
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
 

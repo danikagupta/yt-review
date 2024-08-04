@@ -15,7 +15,7 @@ st.markdown("# Transcripts available")
 def ask_one_question(transcript,api_key):
     question = st.text_input("Ask a question about this session")
     if question:
-        st.markdown(f"Here is a dummy answer for question: {question}")
+        #st.markdown(f"Here is a dummy answer for question: {question}")
         responses=qna_one_question(transcript,question,api_key)
         print(f"Responses: {responses}, TYPE: {type(responses)}")
         for rsp in responses:
