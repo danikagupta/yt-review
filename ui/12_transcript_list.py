@@ -20,9 +20,7 @@ def ask_one_question(transcript,api_key):
         print(f"Responses: {responses}, TYPE: {type(responses)}")
         for rsp in responses:
             print(f"Response: {rsp}")
-            st.markdown(f"\n\n### Q: {rsp.question}")
-            st.markdown(f"A: {rsp.answer}")  
-            st.markdown(f"**Score: {rsp.score}**")
+            st.markdown(f"\n\n### Q: {rsp.question}\nA: {rsp.answer}\n**Score: {rsp.score}**")
 
 def main():
     transcripts = get_transcripts(1,2000)

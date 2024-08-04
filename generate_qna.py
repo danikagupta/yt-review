@@ -64,7 +64,7 @@ Please provide the following information regarding the teaching session conducte
 
 The quality of education is very important - please take the time to think step-by-step and provide detailed, accurate, actionable, and constructive feedback. 
 Ideally each question will have five or six bullet points in response.
-Also score the trainers' performance on a scale of 1-10, with 10 being the best.
+For each question, also score the trainers' performance on a scale of 1-10, with 10 being the best.
 
 Be truthful. If you cannot answer a question based on the transcript, please say 'I cannot answer this question based on the transcript' and assign a score of 0.
 

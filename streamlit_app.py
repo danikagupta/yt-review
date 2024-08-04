@@ -20,6 +20,10 @@ def authenticate():
 def main():
     os.environ["LANGCHAIN_TRACING_V2"]="true"
     os.environ["LANGCHAIN_API_KEY"]=st.secrets['LANGCHAIN_API_KEY']
+    os.environ["LANGSMITH_API_KEY"]=st.secrets['LANGCHAIN_API_KEY']
+    os.environ['LANGCHAIN_ENDPOINT']="https://api.smith.langchain.com"
+    os.environ['LANGCHAIN_PROJECT']="yt-review"
+
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
 
