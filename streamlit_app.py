@@ -4,14 +4,14 @@ import os
 #from utils import show_navigation
 #show_navigation()
 
+@st.dialog("Authentication")
 def authenticate():
     st.title("Authentication Required")
     password = st.text_input("Enter the access key:", type="password")
     if password == st.secrets["ACCESS_KEY"]:
         st.session_state["authenticated"] = True
-        if st.button("Continue"):
-            #st.switch_page("ui/12_transcript_list.py")
-            st.switch_page("Transcript List")
+        #print(f"Query params: {st.query_params.to_dict()}")
+        st.rerun()
 
         #st.rerun()
     elif password:
@@ -35,6 +35,7 @@ def main():
         user_pages=[
             st.Page("streamlit_app.py", title="Home", icon="🏠"),
             st.Page("ui/12_transcript_list.py", title="Transcript List", icon="1️⃣"),
+            st.Page("ui/41_one_video_e2e.py", title="Process One Video", icon="2️⃣"),
             #st.Page("ui/14_transcript_yt_video.py", title="Transcript YT Video", icon="2️⃣"),
             #st.Page("ui/11_transcripts_with_answers.py", title="Transcript Q&A", icon="🌎"),
         ]
@@ -46,10 +47,10 @@ def main():
         ]
 
         bulk_pages=[
-            st.Page("ui/31_processing_stats.py", title="Processing stats"),
-            st.Page("ui/32_qna_low_score.py", title="Low score Q-&-A"),
-            st.Page("ui/4_fix_data.py", title="Fix data"),
-            st.Page("ui/22_test_slack.py", title="More testing"),
+            st.Page("ui/31_processing_stats.py", title="Processing stats", icon="1️⃣"),
+            st.Page("ui/32_qna_low_score.py", title="Low score Q-&-A", icon="2️⃣"),
+            st.Page("ui/4_fix_data.py", title="Fix data", icon="🌎"),
+            st.Page("ui/22_test_slack.py", title="More testing", icon="🌎"),
         ]
         pages={
             "User": user_pages,
